@@ -247,4 +247,196 @@ Importante è non avere problemi di 'Shot noise' che renderebbero vana la proced
 
 In generale la manipolazione dei toni di grigio di ciascun pixel avviene tramite una funzione di trasferimento che dipende dal tono stesso ma non dal valore dei pixel confinanti (come nella convoluzione). <br>
 Tale funzione può essere lineare e non lineare al fine di enfatizzare un range di toni e appiattirne altri. <br>
-Utilizzando funzioni di trasferimento con pendenza negativa l'immagine può essere invertita, come il negativo di una pellicola.
+Utilizzando funzioni di trasferimento con pendenza negativa l'immagine può essere invertita, come il negativo di una pellicola. <br>
+![Alt text](<Screenshot 2023-07-03 140337.png>)
+
+Funzioni i trasferimento logaritmica e radice: comprimono la luminosità per i toni più chiari e la accentuano per i toni scuri. <br>
+Funzioni i trasferimento esponenziale e quadratica: comprimono la luminosità per i toni più scusi e la accentuano per i toni chiari.
+![Alt text](<Screenshot 2023-07-03 140521.png>)
+
+## Equalizzazione dell'istogramma <br>
+Esistono tecnche avanzate di "Histogram mode/ing" che permettono di modificare in modo sofisticato il range dinamico e il contrasto dell'immagine in modo che l'istogramma dell'immagine elaborata abbia specifiche caratteristiche. Gli operatori di Histogram mode/ing possono impiegare funzioni di trasferimento non-lineari e anche non monotone. <br>
+L'equalizzazione dell'istogramma impiega una funzione di trasferimento monotona non lineare che ridefinisce i valori di intensità dell'immagine in modo che l'immagine elaborata contenga una distribuzione uniforme di intensità (istogramma piatto). <br>
+
+Trasformata di Fourier (FFT) <br>
+Qualsiasi funzione periodica f(t) può essere scomposta nella somma di diverse
+funzioni seno - coseno a frequenza crescente (serie di Fourier).
+- 1-D FT: analisi di segnali (1-D)
+- 2-D FT: analisi di immagini (2-D)
+
+![Alt text](<Screenshot 2023-07-03 141047.png>)
+
+Eliminazione di una frequenz indesiderata <br>
+![Alt text](<Screenshot 2023-07-03 141047-1.png>)
+
+Esempio di trasformate di Fourier per alcune immagini con elevata periodicità. <br>
+![Alt text](<Screenshot 2023-07-03 141556.png>)
+
+Quando le immagini presentino informazioni periodiche da esaltare o eliminare, è utile lavorare nel dominio delle frequenze. <br>
+Sono necessari i seguenti passaggi:
+- Trasformazione nel dominio della frequenzao
+- Filtraggio nel nuovo dominio
+- Trasformazione inversa per tornare nel dominio dello spazio
+
+![Alt text](<Screenshot 2023-07-03 141855.png>)
+
+Le basse frequenze corrispondono a graduali variazioni della luminosità dei pixel (superfici continue). <br>
+Le alte frequenze corrispondono repentine variazioni dell'intensità dei pixel (spigoli, rumore, ecc.).
+![Alt text](<Screenshot 2023-07-03 142009.png>)
+
+Applicazione della FFT per la rimozione del rumore: eliminazione del corrispondente spot luminoso nell'immagine della trasformata
+![Alt text](<Screenshot 2023-07-03 142213.png>)
+![Alt text](<Screenshot 2023-07-03 142447.png>)
+![Alt text](<Screenshot 2023-07-03 142553.png>)
+
+## Segmentazione
+Procedura ampiamente utilizzata per isolare nell'immagine solo le porzioni che contengono l'informazione desiderata (generalmente linee, curve, aree) <br>
+II processo consiste nel classificare i pixel che hanno caratteristiche comuni (colore, intensità, texture). <br>
+Le regioni individuate avranno quindi almeno una di tali caratteristiche differenti. <br>
+![Alt text](<Screenshot 2023-07-03 143017.png>)
+
+Esistono diverse metodologie di segmentazione che si basano sulla elaborazione dell'istogramma dei toni di grigio secondo la logica di un 'descrittore':
+- Classificazione dei pixel sulla base dei valori di intensità luminosa e applicazione di una soglia globale (**Thresholding e Binarizzazione**)
+- Riconoscimento dei contorni (**edge detection**): si identificano le linee dove la luminosità cambia repentinamente.
+- Raggruppamento (**clustering**): identifica aree di pixel aventi stesse caratteristiche in modo matematico (distanza euclidea e di colore, ecc.).
+- Accrescimento delle aree (**Region growing**): parte da piccole aree di pixel di una regione dell'immagine e le accresce fino a coprire l'intera regione.
+
+### Thresholding e Binarizzazione
+- Consiste nel selezionare dall'immagine solo i pixel che hanno una luminosità inclasa in un range di toni di grigio prescelto.
+- I pixel selezionati verranno convertiti con una luminosità a profondità binaria: ossia bianchi o neri.
+- La scelta del range viene effettuata manualmente osservando l'immagine e agendo con software dedicati sull'istogramma dell'immagine.
+
+La binarizzazione raramente produce subito risultati soddisfacenti a causa dell'illuminazione non uniforme o altre sorgenti di rumore.
+![Alt text](<Screenshot 2023-07-03 143931.png>)
+
+II miglioramento delle immagini binarizzate viene effettuato processandole con 2 famiglie di filtri:
+- Filtri booleani (comparazione e combinazione di più immagini)
+- Filtri morfologici (modifica individuale dei pixel)
+Combinare più immagini è utile nella manipolazione delle immagini SEM e delle mappe EDS dove ogni immagine contiene parte dell'informazione.
+
+I filtri booleani sono operazioni logiche che combinano due immagini binarie (A e B) per produrre una terza immagine binaria (C). <br>
+![Alt text](<Screenshot 2023-07-03 144156.png>)
+
+Filtri Morfologici
+I filtri morfologici sono quelli più utilizzati tra cui si evidenziano:
+- Erosion -> Opening
+- Dilation -> Closing
+
+Sono operatori che coinvolgono i pixel confinanti ma, essendo l'immagine binarizzata, le operazioni sono semplici (i pesi sono solo 1 o 0). <br>
+Si ottiene l'aggiunta o l'eliminazione di pixel bianchi in base alla densità di quelli circondanti il pixel in oggetto, secondo determinate regole. <br>
+
+**Erosion** <br>
+La procedura rimuove i pixel bianchi isolati rispetto al numero di quelli bianchi che lo circondano, per eliminare i dettagli indesiderati a seguito della binarizzazione. <br>
+**Dilation** <br>
+Procedura inversa all'Erosion. Pixel bianchi vengono aggiunti attorno alle aree ad alta densità di pixel bianchi. <br>
+
+Applicazione dei filtri Erosion e Dilation
+- Isolamento delle sole fasi grigie tramite impiego in sequenza dei 2 filtri morfologici su una lega.
+
+![Alt text](<Screenshot 2023-07-03 144801.png>)
+
+Filtro Opening: sequenza i operazioni ripetute di Erosion e Dilation al fine di separare i particolari di interesse:
+
+![Alt text](<Screenshot 2023-07-03 144940.png>)
+
+Filtro Closing: sequenza di operazioni ripetute di Erosion e Dilation al fine di unire i particolari di interesse. <br>
+es. fibre in cross-section con criccature.
+
+![Alt text](<Screenshot 2023-07-03 145154.png>)
+
+## Premesse all'analisi quantitativa delle immagini
+Significatività e affidabilità delle analisi. <br>
+
+Per ottenere immagini che contengano informazioni misurabili è essenziale che il campione sia rappresentativo dell'universo osservato e che la catena di acquisizione sia in grado di raccogliere il massimo numero di informazioni necessarie (e il minimo numero di informazioni non necessarie o sbagliate). <br>
+
+I software per l'analisi di immagine possono generare nuove informazioni, ma il livello di affidabilità delle informazioni create è direttamente dipendente dalla conoscenza del fenomeno reale che si sta investigando, e dalla qualità e quantità delle informazioni «reali» contenute nell'immagine elaborata. <br>
+
+Questi sono elementi imprescindibili per tentare successivamente la costruzione di conoscenza per interpolazione, estrapolazione con la formulazione di modelli descrittivi e/o predittivi.
+
+## Misura delle grandezze 
+La prima ase consiste ne a ca i razione imensionae e immagine. <br>
+
+E' necessario cioè riferire l'immagine ad un sistema di riferimento opportuno: dimensioni, geolocalizzazione, piano di proiezione, sistema di proiezione. <br>
+
+Trascurando le trasformazioni più complesse (normalizzazione, ortonormalizzazione , planarizzazione , passaggio a coordinate polari...) il primo elemento fondamentale è quello di stabilire la scala dimensionale, e cioè i versori degli assi e il loro valore scalare rispetto ad una grandezza di riferimento.
+
+Molti software di acquisizione eseguono automaticamente tale operazione, laddove la catena di misura è fissa e il software è in dotazione con la catena di acquisizione.
+
+Altre volte è necessario calibrare la catena di misura.
+
+E' comunque buona norma verificare sempre la corretta calibrazione, soprattutto laddove sia richiesto un elevato livello di precisione e accuratezza.
+
+Anche nei casi più semplici (rappresentazione cartesiana) è opportuno eseguire la calibrazione comunque per entrambi gli assi.
+
+In alcune circostanze e laddove si è consapevoli di errori sistematici (i.e. aberrazioni sferiche delle lenti, oppure sistemi di acquisizione con fattori di ingrandimento non costanti su tutto il campo di osservazione) è indispensabile trovare la funzione di trasferimento per calibrare l'immagine, altrimenti segmenti di uguali dimensioni in zone diverse dell'immagine possono fornire dati falsati.
+
+Un errore classico è quello di considerare il piano immagine come una proiezione piana parallela al piano oggetto.
+
+Questo può portare a gravi errori nel caso di sezioni inclinate rispetto all'asse ottico di acquisizione dell'immagine, fortunatamente sistematico e quindi facilmente rettificabile.
+
+Procedura piu elementare di calibrazione per un ottico:
+1. Viene acquisita l'immagine di uno standard (oggetto graduato)
+2. Si estrapola la dimensione del singolo pixel (gm/ pix , spesso rettangolare!)
+3. Tale dimensione (in x e in y) viene utilizzata per calibrare le immagini che verranno prodotte da quella determinata catena di misura (i.e. con lo stesso sistema ottico).
+
+Sull'immagine calibrata si possono effettuare tutte le misure di interesse 
+
+L'immagine calibrata si riconosce perché porta sovraimpressa la dima o barra dimensionale.
+
+Attenzione va posta nell'inserire una dima bidimensionale su un'immagine prospettica o con grande tridimensionalità.
+
+Le misure prese sulle immagini saranno una parte di tutti i valori misurabili in quel campo di osservazione, che è una parte della superficie osservabile del campione, che a sua volta è una porzione del materiale che stiamo studiando. <br>
+
+Non dobbiamo mai dimenticare che a questi valori va sempre data una significatività statistica.
+
+E' prassi classificare i dati ottenuti e generare dei grafici di dispersione che meglio descrivano il comportamento statistico delle grandezze osservate, passando ove il caso a test statistici di significatività (t di student , chi quadro, ecc). <br>
+
+Quanto più numerosi sono i dati e le classi, tanto più il grafico approssima una curva continua, la cosiddetta " curva di frequenza".
+
+![Alt text](<Screenshot 2023-07-03 150430.png>)
+
+![Alt text](<Screenshot 2023-07-03 150525.png>)
+
+![Alt text](image.png)
+
+
+# ImageJ
+![Alt text](image-1.png)
+![Alt text](image-2.png)
+![Alt text](image-4.png)
+
+Image > Type seleziona i bit per pixel dell'immagine (8, 16, 32 bit) <br>
+
+Analyze: per estrarre l'informazione di interesse dall'immagine. <br>
+
+![Alt text](image-5.png)
+Analyze > Histogram: genera un istogramma dell'immagine. Applicando Log reisco ad amplificare i valori più bassi. <br>
+Se l'istogramma va a 0 per un buon range di valori, significa che l'immagine non sfrutta tutto il range di valori disponibili. <br>
+Enhance contrast: settando 0% e normalizzando l'immagine si schiarisce leggermente e l'istogramma si distribuisce meglio su tutti i livelli. I valori intermedi sono interpolati. <br>
+![Alt text](image-6.png)
+
+![Alt text](image-7.png)
+
+![Alt text](image-8.png)
+L'asse x dell'istogramma mostra il numero di bit del convertitore analogico digitale
+
+![Alt text](image-9.png)
+Mettendo 0%, in questo caso la normalizzazione non è servita
+Mettendo 5% e normalizzando l'immagine si schiarisce leggermente e l'istogramma si distribuisce meglio su tutti i livelli. I valori intermedi sono interpolati. <br>
+Abbiamo acquisito informazione perché abbiamo scoperto una parte dell'immagine che non era visibile prima ma abbiamo perso in definizione. <br>
+
+![Alt text](image-10.png)
+L'equalizzazione crea una funzione di trasferimento monotona non lineare ottimizzata per questa specifica immagine in cui si cerca di avere una distribuzione uniforme dei livelli di grigio. <br>
+Questo permette di creare contrasto dove non c'è e non esagerare dove c'è già. <br> 
+Ad esempio riusciamo a distinguere il grigio anche all'interno della galassia. <br>
+
+---
+Image > Adjust > Brightness/Contrast: permette di regolare il contrasto e la luminosità dell'immagine. <br>
+![Alt text](image-11.png)
+La retta indica le attuali impostazioni della funzione di trasferimento che di base è un'identità. <br>
+La Brightness tende ad aggiungere un offset comune tutti i livelli di grigio (+Brightness -> +Offset, -Brightness -> -Offset). <br>
+Il Contrast tende ad aumentare la pendenza della funzione di trasferimento (+Contrast -> +Pendenza, -Contrast -> -Pendenza). <br>
+
+---
+Aumentando il minimo e riducendo il massimo si aumenta il contrasto senza cambiare la pendenza della retta -> senza perdere informazione. <br>
+![Alt text](image-12.png)
