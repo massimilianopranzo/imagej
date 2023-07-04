@@ -440,3 +440,105 @@ Il Contrast tende ad aumentare la pendenza della funzione di trasferimento (+Con
 ---
 Aumentando il minimo e riducendo il massimo si aumenta il contrasto senza cambiare la pendenza della retta -> senza perdere informazione. <br>
 ![Alt text](image-12.png)
+
+## RGB images
+1/3 mostra il numero del canale (Rosso). <br>
+512x512 shows the image size. <br>
+8-bit shows the color depth of each color channel. <br>
+768k shows the image size in bytes. <br>
+The bottom bar shows the three color channels. <br>
+White = R + G + B. <br>
+![Alt text](image-13.png)
+Image > Type > 8-bit: converts the image in grayscale. <br>
+![Alt text](image-14.png)
+
+The image has a red fluorescence which is captured with a RGB camera, then the green and blue channels are empty. <br> 
+The red channel can be easily converted into a grayscale image by selecting Image > Type > 8-bit. <br>
+![Alt text](image-15.png)
+We can directly obtain the grayscale image by selecting Image > Color > Grayscale even if the image is RGB. <br> 
+The resulting image is much more dark than the previous one since the coordinates of each pixel are averaged by 1/3 red + 1/3 green + 1/3 blue. In this case green and blue are black so the resulting image is much more dark. <br>
+We can adjust the brightness and contrast of the image by selecting Image > Adjust > Brightness/Contrast. <br>
+Its histogram is concentrated in the low values of the grayscale. <br>
+![Alt text](image-16.png)
+![Alt text](image-17.png)
+The left histogram doesn't cover the whole range of the grayscale since we have only stretched the histogram by adjusting the brightness and contrast. It has a lot of zeros since the values are interpolated only where there are values, if there are zeros they remain zeros. <br>
+The right histogram covers the whole range of the grayscale and has much more less zeros since the values are interpolated everywhere. <br>
+Converting an RGB into a 8-bit grayscale image generates a loss of information.
+![Alt text](image-18.png)
+
+## Look up table
+Image > Color > Show LUT
+The look up table only converts the image visualization, not the pixel values. <br>
+The graph shows the correlation between the bit 
+![Alt text](image-19.png)
+![Alt text](image-20.png)
+
+The histogram has great peaks at low values of the grayscale while the image is not so dark. <br>
+This is due to the fact that the image is saved as an inverted LUT. The histogram was correct but the image was inverted. <br>
+![Alt text](image-21.png)
+![Alt text](image-22.png)
+
+EditLUT allows to modify how a color should be displayed
+![Alt text](image-23.png)
+![Alt text](image-24.png)
+![Alt text](image-25.png)
+
+To make some measurements, the image has to be calibrated. <br>
+![Alt text](image-26.png)
+
+## Segmentazione
+Mettiamo a 1 o a 0 i pixel in base al valore di soglia. <br>
+Image > Adjust > Threshold: permette di selezionare il valore di soglia. <br>
+![Alt text](image-27.png)
+
+## Conteggio particelle
+![Alt text](image-28.png)
+![Alt text](image-29.png)
+![Alt text](image-30.png)
+
+By making the ratio between area of different gray levels we can get the percentage of the colors in an area. <br>
+![Alt text](image-31.png)
+
+## Erosion and dilation
+![Alt text](image-32.png)
+![Alt text](image-33.png)
+![Alt text](image-34.png)
+
+## Segmentazione immagini a colori
+![Alt text](image-35.png)
+![Alt text](image-36.png)
+![Alt text](image-37.png)
+
+## Correzione shot noise
+![Alt text](image-38.png)
+Process > Smooth non è molto efficace. <br>
+Process > Filters > Mean con raggio 2 non è molto efficace. <br>
+Process > Filters > Mean con raggio 5 è efficace ma c'è molto blurring tra le zone bianche e nere. <br>
+Process > Filters > Median con raggio è efficace e non c'è blurring tra le zone bianche e nere. Questo filtro non è lineare .<br>
+
+## Filtraggio in frequenza
+Il grafico mostra uno sfondo non uniforme, tende lentamente al bianco da sinistra verso destra. <br>
+![Alt text](image-39.png)
+Usando un filtro passa basso si ottiene un'immagine più uniforme. <br>
+Mettendo 200 pixels in "filter large structures down to" filtriamo tutte le strutture più piccole di 200 pixels. <br>
+![Alt text](image-40.png)
+
+## FFT 
+![Alt text](image-41.png)
+![Alt text](image-42.png)
+![Alt text](image-43.png)
+![Alt text](image-44.png)
+![Alt text](image-45.png)
+
+![Alt text](image-46.png)
+![Alt text](image-47.png)
+![Alt text](image-48.png)
+![Alt text](image-49.png)
+
+## Edge detection
+![Alt text](image-50.png)
+![Alt text](image-51.png)
+Il watershed applicato a immagini binarizzate funziona solo per maschere convesse
+![Alt text](image-52.png)
+![Alt text](image-53.png)
+![Alt text](image-54.png)
